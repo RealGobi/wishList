@@ -3,9 +3,11 @@ import VueFire from 'vuefire'
 import firebase from 'firebase';
 import App from './App.vue';
 import router from './router';
-import {fb} from './firebase-config';
+import {fb, db} from './firebase-config';
 
 Vue.config.productionTip = false;
+
+window.firebase=firebase;
 
 let app ='';
 firebase.auth().onAuthStateChanged(()=>{

@@ -1,16 +1,46 @@
 <template>
   <div class="hello">
-   Önskelista
+   <h3>Önskelista</h3>
+     <input type="text" placeholder="Lägg till önskan..." v-model="wish" @keyup.enter="addWish">
+     <ul>
+       <li v-for="(wishName,key) in wishes" :key="key">
+         <h4>{{wishName.name}}</h4>
+         <button>Edit</button>
+       </li>
+     </ul>
+
 
   </div>
 </template>
 
 <script>
+import firebase from 'firebase'
 export default {
   name: 'HelloWorld',
-  props: {
-    msg: String
+  data(){
+    return{
+    wish:null,
+    wishes: {},
   }
+},
+methods:{
+  addWish(){
+    firebase.database().ref('wishes').push({name:this.wish})
+    .then((data)=> {
+      console.log(data)
+      })
+    .catch((error) =>  {
+      console.log(error)
+    });
+
+  },
+    
+  created(){
+    firebase.database().ref('wishes').on('value', (snapshot) =>{
+      this.wishes=snapshot.val();
+    });
+  }
+}
 }
 </script>
 
@@ -22,9 +52,10 @@ h3 {
 ul {
   list-style-type: none;
   padding: 0;
+  
 }
 li {
-  display: inline-block;
+
   margin: 0 10px;
 }
 a {
