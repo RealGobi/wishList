@@ -22,20 +22,29 @@ export default {
   data(){
     return{
     wish:null,
-    wishes: {},
+    wishes: [],
     editWish: []
   }
 },
 methods:{
+    editWish(key){
+    firebase.database().ref('wishes/' + key).set({
+      name:this.editWish[key]
+    });
+  },
+  deleteWish(key){
+    firebase.database().ref('wishes/' + key).remove();
+    
+  },
   addWish(){
     firebase.database().ref('wishes').push({name:this.wish})
+    wish:null
     .then((data)=> {
       console.log(data)
       })
     .catch((error) =>  {
       console.log(error)
     });
-
   }
     
 } ,
@@ -43,16 +52,9 @@ methods:{
     firebase.database().ref('wishes').on('value', (snapshot) =>{
       this.wishes=snapshot.val();
     });
-},
-  editWish(key){
-    firebase.database().ref('wishes/' + key).set({
-      name:this.editWish[key]
-    });
-  },
-deleteWish(key){
-    firebase.database().ref('wishes/' + key).remove();
-    
-  }
+}
+
+
 }
 </script>
 
