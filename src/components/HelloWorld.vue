@@ -6,6 +6,8 @@
        <li v-for="(wishName,key) in wishes" :key="key">
          <h4>{{wishName.name}}</h4>
          <button>Edit</button>
+         <button @click="deleteWish(key)">Delete</button>
+         <input type="text" placeholder="ändra..." v-model="editWish[key]" @keyup.enter="editWish(key)">
        </li>
      </ul>
 
@@ -21,6 +23,7 @@ export default {
     return{
     wish:null,
     wishes: {},
+    editWish: []
   }
 },
 methods:{
@@ -33,14 +36,23 @@ methods:{
       console.log(error)
     });
 
-  },
+  }
     
+} ,
   created(){
     firebase.database().ref('wishes').on('value', (snapshot) =>{
       this.wishes=snapshot.val();
     });
+},
+  editWish(key){
+    firebase.database().ref('wishes/' + key).set({
+      name:this.editWish[key]
+    });
+  },
+deleteWish(key){
+    firebase.database().ref('wishes/' + key).remove();
+    
   }
-}
 }
 </script>
 
