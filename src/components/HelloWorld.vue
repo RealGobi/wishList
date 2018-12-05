@@ -1,13 +1,16 @@
 <template>
   <div class="hello">
-   <h3>Önskelista</h3>
      <input type="text" placeholder="Lägg till önskan..." v-model="wish" @keyup.enter="addWish">
+   <h3>Önskelista</h3>
      <ul>
        <li v-for="(wishName,key) in wishes" :key="key">
-         <h4>{{wishName.name}}</h4>
-         <button>Edit</button>
+         <h4>- {{wishName.name}} -</h4>
+         <button @click="show = !show" >Edit</button>
          <button @click="deleteWish(key)">Delete</button>
-         <input type="text" placeholder="ändra..." v-model="editWish[key]" @keyup.enter="editWish(key)">
+       
+         <input v-show="show" type="text" placeholder="ändra..." v-model="editWishProp[key]"  @keyup.enter="editWish(key)">
+     
+
        </li>
      </ul>
 
@@ -23,14 +26,16 @@ export default {
     return{
     wish:null,
     wishes: [],
-    editWish: []
+    editWishProp: [],
+    show: false
   }
 },
 methods:{
     editWish(key){
     firebase.database().ref('wishes/' + key).set({
-      name:this.editWish[key]
+      name:this.editWishProp[key]
     });
+    this.editWishProp= []
   },
   deleteWish(key){
     firebase.database().ref('wishes/' + key).remove();
@@ -38,13 +43,8 @@ methods:{
   },
   addWish(){
     firebase.database().ref('wishes').push({name:this.wish})
-    wish:null
-    .then((data)=> {
-      console.log(data)
-      })
-    .catch((error) =>  {
-      console.log(error)
-    });
+   this.wish=null
+  
   }
     
 } ,
@@ -60,19 +60,31 @@ methods:{
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.hello{
+  width: 20%;
+  margin: auto;
+}
+
 h3 {
-  margin: 40px 0 0;
+  margin: 30px;
 }
 ul {
-  list-style-type: none;
-  padding: 0;
-  
+
+}
+h4{
+  color: white;
 }
 li {
 
-  margin: 0 10px;
+  background-color: red;
+  border-radius: 5px;
+  list-style-type: none;
+  padding: 5px;
+  margin: 5px 0;
 }
-a {
-  color: #42b983;
+
+input{
+  margin-top: 30px;
+  font-size: 24px;
 }
 </style>
